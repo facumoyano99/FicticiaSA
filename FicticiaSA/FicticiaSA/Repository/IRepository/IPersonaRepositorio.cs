@@ -1,4 +1,4 @@
-﻿using FicticiaSA.Models;
+using FicticiaSA.Models;
 
 namespace FicticiaSA.Repository.IRepository
 {
@@ -11,7 +11,7 @@ namespace FicticiaSA.Repository.IRepository
         void UpdatePersona(Persona persona);
         Task<bool> PersonaUpdateExists(int IdPersona, string documento);
         void DeletePersona(Persona persona);
-        Task<IList<Persona>> GetPersonas();
+        Task<IList<Persona>> GetPersonas(bool EsActivo);
 
 
     }

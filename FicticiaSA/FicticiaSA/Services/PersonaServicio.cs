@@ -1,4 +1,4 @@
-﻿using FicticiaSA.Models.Dtos;
+using FicticiaSA.Models.Dtos;
 using FicticiaSA.Repository.IRepository;
 using FicticiaSA.Services.IServices;
 using FicticiaSA.Helpers;
@@ -30,6 +30,8 @@ namespace FicticiaSA.Services
                     return new ResponseObjectJsonDto { Code = (int)CodeHTTP.INTERNALSERVER, Message = "Ya existe un cliente registrado con ese documento" };
                 }
                 Persona persona = mapper.Map<Persona>(personaPostDto);
+                persona.FechaAlta = DateTime.Now;
+                persona.EsActivo = true;
                 await personaRepositorio.CreatePersona(persona);
                 if (!await dbOperation.Save())
                 {
@@ -59,6 +61,7 @@ namespace FicticiaSA.Services
                 }
                 Persona persona = mapper.Map<Persona>(personaPatchDto);
                 persona.EsActivo = personaBD.EsActivo;
+                persona.FechaAlta = personaBD.FechaAlta;
                 personaRepositorio.UpdatePersona(persona);
                 if (!await dbOperation.Save())
                 {
@@ -98,6 +101,32 @@ namespace FicticiaSA.Services
 
         }
 
+        public async Task<ResponseObjectJsonDto> AltaLogicaPersona(int idPersona)
+        {
+            try
+            {
+                Persona personaBD = await personaRepositorio.GetPersona(idPersona);
+                if (personaBD == null)
+                {
+                    return new ResponseObjectJsonDto { Code = (int)CodeHTTP.INTERNALSERVER, Message = "No existe el cliente" };
+                }
+                personaBD.EsActivo = true;
+                personaBD.FechaBaja = null;
+                personaBD.FechaAlta = DateTime.Now;
+                personaRepositorio.UpdatePersona(personaBD);
+                if (!await dbOperation.Save())
+                {
+                    return new ResponseObjectJsonDto { Code = (int)CodeHTTP.INTERNALSERVER, Message = "Error al intentar dar de alta el cliente" };
+                }
+                return new ResponseObjectJsonDto() { Code = (int)CodeHTTP.OK, Message = "Cliente dado de alta con éxito" };
+            }
+            catch (Exception e)
+            {
+                return new ResponseObjectJsonDto() { Code = (int)CodeHTTP.INTERNALSERVER, Response = e };
+            }
+
+        }
+
         public async Task<ResponseObjectJsonDto> DeletePersona(int idPersona)
         {
             try
@@ -120,10 +149,35 @@ namespace FicticiaSA.Services
             }
 
         }
-        public async Task<ResponseObjectJsonDto> GetPersonas()
+        public async Task<ResponseObjectJsonDto> GetPersonas(bool EsActivo)
         {
-            IList<Persona> personas = await personaRepositorio.GetPersonas();
-            return new ResponseObjectJsonDto() { Code = (int)CodeHTTP.OK, Response = personas };
+            IList<Persona> personas = await personaRepositorio.GetPersonas(EsActivo);
+            if (personas == null || personas.Count == 0)
+            {
+                if (EsActivo)
+                {
+                    return new ResponseObjectJsonDto { Code = (int)CodeHTTP.INTERNALSERVER, Message = "No existen clientes dados de alta" };
+                }
+                else
+                {
+                    return new ResponseObjectJsonDto { Code = (int)CodeHTTP.INTERNALSERVER, Message = "No existen clientes dados de baja" };
+                }
+            }
+            IList<PersonaGetDto> personasDto = mapper.Map<IList<Persona>, IList<PersonaGetDto>>(personas);
+            return new ResponseObjectJsonDto() { Code = (int)CodeHTTP.OK, Response = personasDto };
+
+        }
+
+        public async Task<ResponseObjectJsonDto> GetPersona(int idPersona)
+        {
+            Persona persona = await personaRepositorio.GetPersona(idPersona);
+            if (persona == null)
+            {
+                return new ResponseObjectJsonDto { Code = (int)CodeHTTP.INTERNALSERVER, Message = "No existen clientes dados de baja" };
+
+            }
+            PersonaGetDto personasDto = mapper.Map<Persona, PersonaGetDto>(persona);
+            return new ResponseObjectJsonDto() { Code = (int)CodeHTTP.OK, Response = personasDto };
 
         }
     }

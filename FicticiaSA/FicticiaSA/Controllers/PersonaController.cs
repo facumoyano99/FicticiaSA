@@ -1,4 +1,4 @@
-﻿using FicticiaSA.Helpers;
+using FicticiaSA.Helpers;
 using FicticiaSA.Models.Dtos;
 using FicticiaSA.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +54,19 @@ namespace FicticiaSA.Controllers
 
             return Ok(response);
         }
-        [HttpDelete]
+        [HttpPatch("AltaLogica/{idPersona:int}")]
+        public async Task<ActionResult<ResponseObjectJsonDto>> AltaLogicaPersona(int idPersona)
+        {
+            ResponseObjectJsonDto response = await personaServicio.AltaLogicaPersona(idPersona);
+
+            if (response.Code != (int)CodeHTTP.OK)
+            {
+                return StatusCode(response.Code, response);
+            }
+
+            return Ok(response);
+        }
+        [HttpDelete("{idPersona:int}")]
         public async Task<ActionResult<ResponseObjectJsonDto>> DeletePersona(int idPersona)
         {
             ResponseObjectJsonDto response = await personaServicio.DeletePersona(idPersona);
@@ -66,10 +78,23 @@ namespace FicticiaSA.Controllers
 
             return Ok(response);
         }
-        [HttpGet]
-        public async Task<ActionResult<ResponseObjectJsonDto>> GetPersonas()
+        [HttpGet("{EsActivo:bool}")]
+        public async Task<ActionResult<ResponseObjectJsonDto>> GetPersonas(bool EsActivo)
         {
-            ResponseObjectJsonDto response = await personaServicio.GetPersonas();
+            ResponseObjectJsonDto response = await personaServicio.GetPersonas(EsActivo);
+
+            if (response.Code != (int)CodeHTTP.OK)
+            {
+                return StatusCode(response.Code, response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet("{idPersona:int}")]
+        public async Task<ActionResult<ResponseObjectJsonDto>> GetPersona(int idPersona)
+        {
+            ResponseObjectJsonDto response = await personaServicio.GetPersona(idPersona);
 
             if (response.Code != (int)CodeHTTP.OK)
             {

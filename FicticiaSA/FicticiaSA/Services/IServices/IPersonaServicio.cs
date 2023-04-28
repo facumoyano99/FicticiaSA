@@ -9,7 +9,10 @@ namespace FicticiaSA.Services.IServices
         Task<ResponseObjectJsonDto> UpdatePersona(PersonaPatchDto personaPatchDto);
         Task<ResponseObjectJsonDto> DeletePersona(int idPersona);
         Task<ResponseObjectJsonDto> BajaLogicaPersona(int idPersona);
-        Task<ResponseObjectJsonDto> GetPersonas();
+        Task<ResponseObjectJsonDto> AltaLogicaPersona(int idPersona);
+        Task<ResponseObjectJsonDto> GetPersonas(bool EsActivo);
+        Task<ResponseObjectJsonDto> GetPersona(int idPersona);
+
 
 
     }

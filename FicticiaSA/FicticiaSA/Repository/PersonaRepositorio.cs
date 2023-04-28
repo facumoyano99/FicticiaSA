@@ -1,4 +1,4 @@
-﻿using FicticiaSA.Entity;
+using FicticiaSA.Entity;
 using FicticiaSA.Models;
 using FicticiaSA.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +21,9 @@ namespace FicticiaSA.Repository
         {
             return await dbContext.Personas.AnyAsync(u => u.Identificacion == dni);
         }
-        public async Task<IList<Persona>> GetPersonas()
+        public async Task<IList<Persona>> GetPersonas(bool EsActivo)
         {
-            return await dbContext.Personas.Where(x => x.EsActivo == true).ToListAsync();
+            return await dbContext.Personas.Where(x => x.EsActivo == EsActivo).ToListAsync();
         }
         public async Task<Persona> GetPersona(int idPersona)
         {

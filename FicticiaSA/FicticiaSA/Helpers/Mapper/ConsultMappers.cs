@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FicticiaSA.Models;
 using FicticiaSA.Models.Dtos;
 
@@ -10,7 +10,7 @@ namespace FicticiaSA.Helpers.Mapper
         {
             CreateMap<PersonaPostDto, Persona>();
             CreateMap<PersonaPatchDto, Persona>();
-
+            CreateMap<Persona, PersonaGetDto>();
         }
     }
 }
